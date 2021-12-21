@@ -20,7 +20,42 @@
     <link rel="stylesheet" href="/CSS/styles.css" />
   </head>
   <body>
+
     <div class="mainContainer">
+        <div class="innerContainer mt-5">
+            <input
+                  type="text"
+                  class="form-control"
+                  id="student_name"
+                  placeholder="Name"
+                  name="studentName"
+                  required
+                />
+                <input
+                type="number"
+                class="form-control my-3"
+                id="phone_num"
+                placeholder="Mobile Number"
+                name="studentNum"
+                required
+              />
+              <input
+              type="number"
+              class="form-control my-3"
+              id="year"
+              placeholder="Year"
+              name="studentYear"
+              required
+            />
+            <div class="d-flex justify-content-center align-items-center">
+                <button type="submit" class="btn btn-primary" id="match_btn">
+                    REGISTER
+                  </button>
+            </div>
+            
+        </div>
+    </div>
+    <!-- <div class="mainContainer">
       <div class="container formContainer">
         <form>
           <div class="form-group d-flex">
@@ -66,7 +101,7 @@
         <button type="submit" class="btn btn-primary" id="match_btn">
           REGISTER
         </button>
-      </div>
+      </div> -->
       <!-- <h3 class="text1">Hello</h3>
       <h3 class="text2">Hello</h3>
       <h3 class="text3">Hello</h3> -->
@@ -98,18 +133,30 @@
         let student_name = $("#student_name").val();
         let student_num = String($("#phone_num").val());
         let student_year = String($("#year").val());
-        console.log(student_num);
 
         if (student_num.length != 10 || student_num.includes("-")) {
-          alert("Please enter valid number");
+          alert("Please enter valid mobile number");
         } else {
-          //work
+            if (parseInt(student_year) < 5 && parseInt(student_year > 0)) {
+                db.collection(student_year)
+                .add({
+                    name: student_name,
+                    number: student_num,
+                    year: student_year,
+                })
+                .then((docRef) => {
+                    console.log("Document written with ID: ", docRef.id);
+                    alert("Hola Done!");
+                })
+                .catch((error) => {
+                    console.error("Error adding document: ", error);
+                });
+            }
+            else {
+                alert("Make sure it is your current year in college!");
+            }
         }
-        if (parseInt(student_year) < 5 || parseInt(student_year > 0)) {
-          //work
-        } else {
-          alert("Please enter valid year");
-        }
+        
 
         // Add a new document in collection "cities"
         // db.collection(student_year)
@@ -126,18 +173,7 @@
         //     console.error("Error writing document: ", error);
         //   });
 
-        // db.collection(student_year)
-        //   .add({
-        //     name: student_name,
-        //     number: student_num,
-        //     year: student_year,
-        //   })
-        //   .then((docRef) => {
-        //     console.log("Document written with ID: ", docRef.id);
-        //   })
-        //   .catch((error) => {
-        //     console.error("Error adding document: ", error);
-        //   });
+        
       });
 
       //   db.collection("1")
