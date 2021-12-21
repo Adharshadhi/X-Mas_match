@@ -22,7 +22,13 @@
   <body>
 
     <div class="mainContainer">
-        <div class="innerContainer mt-5">
+        <div class="alert alert1 alert-success ">
+            Hola! You have successfully registered, Good luck!
+        </div>
+        <div class="alert alert2 alert-danger">
+            Oops! Something is wrong, check the values again!
+        </div>
+        <div class="innerContainer mt-3">
             <input
                   type="text"
                   class="form-control"
@@ -135,9 +141,10 @@
         let student_year = String($("#year").val());
 
         if (student_num.length != 10 || student_num.includes("-")) {
-          alert("Please enter valid mobile number");
+            $('.alert1').hide();
+            $('.alert2').show();
         } else {
-            if (parseInt(student_year) < 5 && parseInt(student_year > 0)) {
+            if ((parseInt(student_year) < 5 && parseInt(student_year) > 0)) {
                 db.collection(student_year)
                 .add({
                     name: student_name,
@@ -146,14 +153,16 @@
                 })
                 .then((docRef) => {
                     console.log("Document written with ID: ", docRef.id);
-                    alert("Hola Done!");
+                    $('.alert2').hide();
+                    $('.alert1').show();
                 })
                 .catch((error) => {
                     console.error("Error adding document: ", error);
                 });
             }
             else {
-                alert("Make sure it is your current year in college!");
+                $('.alert1').hide();
+                $('.alert2').show();
             }
         }
         
