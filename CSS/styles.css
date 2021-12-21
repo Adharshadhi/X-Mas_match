@@ -60,10 +60,10 @@ body{
 #match_btn{
     background-color: #da3c47;
 }
-
-.alert{
+/* 
+.alert1{
     display: none;
-}
+} */
 
 .alert2{
     display: none;
