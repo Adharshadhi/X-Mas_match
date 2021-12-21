@@ -137,12 +137,21 @@
             $('.alert2').show();
         } else {
             if ((parseInt(student_year) < 5 && parseInt(student_year) > 0)) {
-                $(".mainContainer").css({
-                'background-image' : 'url(/assets/findweb.jpg)',
-                'background-repeat': 'no-repeat',
-                'background-size': 'cover',
-                'background-position': 'center',
+                if (window.matchMedia('(max-width: 576px)').matches) {
+                    $(".mainContainer").css({
+                        'background-image' : 'url(/assets/findmob.jpg)',
+                        'background-repeat': 'no-repeat',
+                        'background-size': 'cover',
+                        'background-position': 'center',
+                    });
+                } else {
+                    $(".mainContainer").css({
+                        'background-image' : 'url(/assets/findweb.jpg)',
+                        'background-repeat': 'no-repeat',
+                        'background-size': 'cover',
+                        'background-position': 'center',
                 });
+                }
                 $("#phone_num").addClass("hide");
                 $("#year").addClass("nodisplay");
                 $("#match_btn").addClass("nodisplay");
@@ -178,7 +187,6 @@
                 .get()
                 .then((querySnapshot) => {
                     let x = Math.floor(Math.random() * querySnapshot.docs.length);
-                    console.log(x);
                     const doc = querySnapshot.docs[x];
                     matchName.textContent = doc.data().name;
                     matchYear.textContent = "Year : " + doc.data().year;
