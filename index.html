@@ -56,9 +56,9 @@
           Submit
         </button>
       </div>
-      <h3 class="text1">Hello</h3>
+      <!-- <h3 class="text1">Hello</h3>
       <h3 class="text2">Hello</h3>
-      <h3 class="text3">Hello</h3>
+      <h3 class="text3">Hello</h3> -->
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-app.js"></script>
@@ -85,8 +85,20 @@
 
       matchBtn.addEventListener("click", () => {
         let student_name = $("#student_name").val();
-        let student_num = $("#phone_num").val();
+        let student_num = String($("#phone_num").val());
         let student_year = String($("#year").val());
+        console.log(student_num);
+
+        if (student_num.length != 10 || student_num.includes("-")) {
+          alert("Please enter valid number");
+        } else {
+          //work
+        }
+        if (parseInt(student_year) < 5 || parseInt(student_year > 0)) {
+          //work
+        } else {
+          alert("Please enter valid year");
+        }
 
         // Add a new document in collection "cities"
         // db.collection(student_year)
