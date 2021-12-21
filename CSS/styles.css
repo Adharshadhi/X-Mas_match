@@ -1,0 +1,20 @@
+body{
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+}
+
+.mainContainer{
+    max-width: 40%;
+}
+
+.mainContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.mainContainer .formContainer{
+    width: 80%;
+}
