@@ -21,6 +21,7 @@
   </head>
   <body>
 
+    <!-- <div class="nodisplay" id="pre-loader"></div> -->
     <div class="mainContainer">
         <!-- <div class="alert alert1 alert-success ">
             Hola! You have successfully registered, Good luck!
@@ -126,7 +127,6 @@
       var db = firebase.firestore();
       const matchBtn = document.querySelector("#match_btn");
 
-
       matchBtn.addEventListener("click", () => {
 
         let student_num = String($("#phone_num").val());
@@ -137,6 +137,13 @@
             $('.alert2').show();
         } else {
             if ((parseInt(student_year) < 5 && parseInt(student_year) > 0)) {
+                // const preLoader = document.querySelector("#pre-loader");
+
+                // setTimeout(function () {
+                //     preLoader.style.display = "none";
+                //     outerContainer.style.display = "block";
+                // }, 1000);
+
                 if (window.matchMedia('(max-width: 576px)').matches) {
                     $(".mainContainer").css({
                         'background-image' : 'url(/assets/findmob.jpg)',
@@ -186,14 +193,21 @@
                 db.collection(String(temp))
                 .get()
                 .then((querySnapshot) => {
-                    let x = Math.floor(Math.random() * querySnapshot.docs.length);
+
+                    var x = Math.floor(Math.random() * querySnapshot.docs.length);
                     const doc = querySnapshot.docs[x];
                     matchName.textContent = doc.data().name;
                     matchYear.textContent = "Year : " + doc.data().year;
+                    db.collection(String(temp)).doc(doc.id).delete().then(() => {
+                        console.log("Document successfully deleted!");
+                    }).catch((error) => {
+                        console.error("Error removing document: ", error);
+                    });
                 })
                 .catch((error) => {
                     console.log("Error getting documents: ", error);
                 });
+
                 $('.alert2').hide();
 
                 // db.collection(student_year)
