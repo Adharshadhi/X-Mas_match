@@ -69,6 +69,14 @@ body{
     display: none;
 }
 
+.nodisplay{
+    display: none;
+}
+
+.hide{
+    opacity: 0;
+}
+
 @media only screen and (max-width: 576px) {
     .mainContainer{
         width: 100%;
@@ -80,3 +88,6 @@ body{
     }
     
 }
+/* 
+findmatch */
+

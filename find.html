@@ -29,7 +29,7 @@
             Oops! Something is wrong, check the values again!
         </div>
         <div class="innerContainer mt-3">
-                <input
+              <input
                 type="number"
                 class="form-control my-4"
                 id="phone_num"
@@ -48,12 +48,8 @@
             <div class="d-flex justify-content-center align-items-center">
                 <button type="submit" class="btn btn-primary" id="match_btn">
                     Find Your Match
-                  </button>
+                </button>
             </div>
-            
-            <h3 class="text1">hello</h3>
-            <h3 class="text2">hi</h3>
-
         </div>
     </div>
     <!-- <div class="mainContainer">
@@ -129,10 +125,10 @@
 
       var db = firebase.firestore();
       const matchBtn = document.querySelector("#match_btn");
-      const text1 = document.querySelector(".text1");
-      const text2 = document.querySelector(".text2");
+
 
       matchBtn.addEventListener("click", () => {
+
         let student_num = String($("#phone_num").val());
         let student_year = String($("#year").val());
 
@@ -141,6 +137,39 @@
             $('.alert2').show();
         } else {
             if ((parseInt(student_year) < 5 && parseInt(student_year) > 0)) {
+                $(".mainContainer").css({
+                'background-image' : 'url(/assets/findweb.jpg)',
+                'background-repeat': 'no-repeat',
+                'background-size': 'cover',
+                'background-position': 'center',
+                });
+                $("#phone_num").addClass("hide");
+                $("#year").addClass("nodisplay");
+                $("#match_btn").addClass("nodisplay");
+
+                let matchName = document.createElement("h4");
+                let matchYear = document.createElement("h4");
+                let matchContainer = document.createElement("div");
+                $(matchName).css({
+                    "text-align":"center",
+                    "font-size":"30px",
+                    "font-weight":"bold",
+                    "color" : "#fff"
+                });
+                $(matchYear).css({
+                    "text-align":"center",
+                    "font-size":"25px",
+                    "font-weight":"bold",
+                    "color" : "#fff"
+                });
+
+                $(matchContainer).append(matchName,matchYear);
+                $(matchContainer).css({
+                    "background-color": "#f72c2c",
+                    "opacity" : "0.5",
+                    "padding" : "10px 15px 10px 15px"
+                })
+                $(".innerContainer").append(matchContainer);
                 let temp = Math.floor((Math.random() * 4)+1)
                 while(temp==student_year){
                     temp = Math.floor((Math.random() * 4)+1)
@@ -151,15 +180,13 @@
                     let x = Math.floor(Math.random() * querySnapshot.docs.length);
                     console.log(x);
                     const doc = querySnapshot.docs[x];
-                    console.log(doc.data().name);
-                    console.log(doc.data().year);
-                    text1.textContent = doc.data().name;
-                    text2.textContent = doc.data().year;
+                    matchName.textContent = doc.data().name;
+                    matchYear.textContent = "Year : " + doc.data().year;
                 })
                 .catch((error) => {
                     console.log("Error getting documents: ", error);
                 });
-
+                $('.alert2').hide();
 
                 // db.collection(student_year)
                 // .add({
