@@ -51,16 +51,22 @@
               required
             />
           </div>
-          <button type="submit" class="btn btn-primary" id="match_btn">
-            Submit
-          </button>
         </form>
+        <button type="submit" class="btn btn-primary" id="match_btn">
+          Submit
+        </button>
       </div>
+      <h3 class="text1">Hello</h3>
+      <h3 class="text2">Hello</h3>
+      <h3 class="text3">Hello</h3>
     </div>
 
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-      import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js";
+    <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-firestore.js"></script>
+    <script>
+      // Import the functions you need from the SDKs you need
       const firebaseConfig = {
         apiKey: "AIzaSyCNkzihFfYVDWcNMhR4lm_mPrgvibvd5fY",
         authDomain: "x-mas-match.firebaseapp.com",
@@ -70,14 +76,59 @@
         appId: "1:955588012114:web:4fcb7b44de045296ba578b",
         measurementId: "G-LP29E37FL2",
       };
-      const app = initializeApp(firebaseConfig);
-      const analytics = getAnalytics(app);
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      firebase.analytics();
+
       var db = firebase.firestore();
+      const matchBtn = document.querySelector("#match_btn");
+
+      matchBtn.addEventListener("click", () => {
+        let student_name = $("#student_name").val();
+        let student_num = $("#phone_num").val();
+        let student_year = String($("#year").val());
+
+        // Add a new document in collection "cities"
+        // db.collection(student_year)
+        //   .doc()
+        //   .set({
+        //     name: student_name,
+        //     phone: student_num,
+        //     year: student_year,
+        //   })
+        //   .then(() => {
+        //     console.log("Document successfully written!");
+        //   })
+        //   .catch((error) => {
+        //     console.error("Error writing document: ", error);
+        //   });
+
+        // db.collection(student_year)
+        //   .add({
+        //     name: student_name,
+        //     number: student_num,
+        //     year: student_year,
+        //   })
+        //   .then((docRef) => {
+        //     console.log("Document written with ID: ", docRef.id);
+        //   })
+        //   .catch((error) => {
+        //     console.error("Error adding document: ", error);
+        //   });
+      });
+
+      //   db.collection("1")
+      //     .get()
+      //     .then((querySnapshot) => {
+      //       let x = Math.floor(Math.random() * querySnapshot.docs.length);
+      //       const doc = querySnapshot.docs[x];
+      //       console.log(doc.data().Name);
+      //     })
+      //     .catch((error) => {
+      //       console.log("Error getting documents: ", error);
+      //     });
     </script>
 
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    <script src="/JS/script.js"></script>
     <script
       src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
       integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
