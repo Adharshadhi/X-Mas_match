@@ -28,6 +28,9 @@
         <div class="alert alert2 alert-danger">
             Oops! Something is wrong, check the values again!
         </div>
+        <div class="alert alert3 alert-danger">
+           Number Already Registered!
+        </div>
         <div class="innerContainer mt-3">
             <input
                   type="text"
@@ -142,46 +145,55 @@
 
         if (student_num.length != 10 || student_num.includes("-")) {
             $('.alert1').hide();
+            $('.alert3').hide();
             $('.alert2').show();
         } else {
             if ((parseInt(student_year) < 5 && parseInt(student_year) > 0)) {
+              let exists = false;
                 db.collection(student_year)
-                .add({
-                    name: student_name,
-                    number: student_num,
-                    year: student_year,
-                })
-                .then((docRef) => {
-                    console.log("Document written with ID: ", docRef.id);
-                    $('.alert2').hide();
-                    $('.alert1').show();
+                .get()
+                .then((querySnapshot) => {
+                  querySnapshot.forEach((doc) => {
+                    if(doc.data().number == student_num){
+                      $('.alert1').hide();
+                      $('.alert2').hide();
+                      $('.alert3').show();
+                      exists = true;
+                    }
+
+                  });
+                  if(exists == false){
+                  db.collection(student_year)
+                      .add({
+                        name: student_name,
+                        number: student_num,
+                        year: student_year,
+                      })
+                    .then((docRef) => {
+                      $('.alert2').hide();
+                      $('.alert3').hide();
+                      $('.alert1').show();
+                    })
+                    .catch((error) => {
+                    });
+                } 
                 })
                 .catch((error) => {
-                    console.error("Error adding document: ", error);
+                console.log("Error getting documents: ", error);
                 });
+                
             }
             else {
                 $('.alert1').hide();
+                $('.alert3').hide();
                 $('.alert2').show();
+                
             }
+
+            window.setTimeout(function(){
+              window.location.reload();
+            },4000);
         }
-        
-
-        // Add a new document in collection "cities"
-        // db.collection(student_year)
-        //   .doc()
-        //   .set({
-        //     name: student_name,
-        //     phone: student_num,
-        //     year: student_year,
-        //   })
-        //   .then(() => {
-        //     console.log("Document successfully written!");
-        //   })
-        //   .catch((error) => {
-        //     console.error("Error writing document: ", error);
-        //   });
-
         
       });
 
