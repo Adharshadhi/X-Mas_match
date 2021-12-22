@@ -110,7 +110,7 @@
     <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-firestore.js"></script>
     <script>
-      let track,num_track,current_doc_id,current_doc_year,matchname,matchyear;
+      let track,num_track,current_doc_id,current_doc_year,matchname,matchyear,matched_check;
       // Import the functions you need from the SDKs you need
       const firebaseConfig = {
         apiKey: "AIzaSyCNkzihFfYVDWcNMhR4lm_mPrgvibvd5fY",
@@ -138,9 +138,6 @@
             $('.alert2').show();
         } else {
             if ((parseInt(student_year) < 5 && parseInt(student_year) > 0)) {
-              
-
-
               track = false;
               num_track = true;
 
@@ -220,7 +217,13 @@
                         .get()
                         .then((querySnapshot) => {
                             var x = Math.floor(Math.random() * querySnapshot.docs.length);
-                            const doc = querySnapshot.docs[x];
+                            let doc = querySnapshot.docs[x];
+                            matched_check=doc.data().matched;
+                            while(matched_check==true){
+                            x = Math.floor(Math.random() * querySnapshot.docs.length);
+                            doc = querySnapshot.docs[x];
+                            matched_check=doc.data().matched;
+                            }
                             matchname =doc.data().name;
                             matchyear=doc.data().year
                             matchName.textContent = matchname;
@@ -235,11 +238,9 @@
                                 console.error("Error assigning match name and match year: ", error);
                             });
 
-                            db.collection(String(temp)).doc(doc.id).delete().then(() => {
-                                console.log("Document successfully deleted!");
-                            }).catch((error) => {
-                                console.error("Error removing document: ", error);
-                            });
+                            db.collection(String(temp)).doc(doc.id).update({
+                              matched:true
+                            })
 
 
                         })
