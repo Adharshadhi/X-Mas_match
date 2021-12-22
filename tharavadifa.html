@@ -110,6 +110,7 @@
     <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-firestore.js"></script>
     <script>
+      let track,num_track,current_doc_id,current_doc_year,matchname,matchyear;
       // Import the functions you need from the SDKs you need
       const firebaseConfig = {
         apiKey: "AIzaSyCNkzihFfYVDWcNMhR4lm_mPrgvibvd5fY",
@@ -137,12 +138,11 @@
             $('.alert2').show();
         } else {
             if ((parseInt(student_year) < 5 && parseInt(student_year) > 0)) {
-                // const preLoader = document.querySelector("#pre-loader");
+              
 
-                // setTimeout(function () {
-                //     preLoader.style.display = "none";
-                //     outerContainer.style.display = "block";
-                // }, 1000);
+
+              track = false;
+              num_track = true;
 
                 if (window.matchMedia('(max-width: 576px)').matches) {
                     $(".mainContainer").css({
@@ -186,45 +186,97 @@
                     "padding" : "10px 15px 10px 15px"
                 })
                 $(".innerContainer").append(matchContainer);
-                let temp = Math.floor((Math.random() * 4)+1)
-                while(temp==student_year){
-                    temp = Math.floor((Math.random() * 4)+1)
-                }
-                db.collection(String(temp))
+
+                db.collection(student_year)
                 .get()
                 .then((querySnapshot) => {
+                  for (var i in querySnapshot.docs) {
+                    const doc = querySnapshot.docs[i]
+                    if((doc.data().number == parseInt(student_num)) && (doc.data().searched == false)){
+                      current_doc_id = doc.id
+                      current_doc_year = student_year
+                    num_track = true;
+                    let temp = Math.floor((Math.random() * 4)+1)
+                    db.collection(String(temp))
+                        .get()
+                        .then((querySnapshot) => {
+                            var x = querySnapshot.docs.length;
+                          }).catch((error) => {
+                                console.error("Error removing document: ", error);
+                            });
 
-                    var x = Math.floor(Math.random() * querySnapshot.docs.length);
-                    const doc = querySnapshot.docs[x];
-                    matchName.textContent = doc.data().name;
-                    matchYear.textContent = "Year : " + doc.data().year;
-                    db.collection(String(temp)).doc(doc.id).delete().then(() => {
-                        console.log("Document successfully deleted!");
-                    }).catch((error) => {
-                        console.error("Error removing document: ", error);
-                    });
+                    while((temp==parseInt(student_year))&&(x>0)){
+                        temp = Math.floor((Math.random() * 4)+1)
+                        db.collection(String(temp))
+                        .get()
+                        .then((querySnapshot) => {
+                            x = querySnapshot.docs.length;
+                          }).catch((error) => {
+                                console.error("Error removing document: ", error);
+                            });
+                    }
+
+                      db.collection(String(temp))
+                        .get()
+                        .then((querySnapshot) => {
+                            var x = Math.floor(Math.random() * querySnapshot.docs.length);
+                            const doc = querySnapshot.docs[x];
+                            matchname =doc.data().name;
+                            matchyear=doc.data().year
+                            matchName.textContent = matchname;
+                            matchYear.textContent = "Year : " + matchyear;
+                            console.log(matchname)
+                            console.log(matchyear)
+
+                            db.collection(current_doc_year).doc(current_doc_id).update({
+                              matchedToName: matchname,
+                              matchedToYear: matchyear,
+                            }).catch((error) => {
+                                console.error("Error assigning match name and match year: ", error);
+                            });
+
+                            db.collection(String(temp)).doc(doc.id).delete().then(() => {
+                                console.log("Document successfully deleted!");
+                            }).catch((error) => {
+                                console.error("Error removing document: ", error);
+                            });
+
+
+                        })
+                        .catch((error) => {
+                            console.log("Error getting documents: ", error);
+                        });
+
+
+                        db.collection(current_doc_year).doc(current_doc_id).update({
+                                searched: true
+                            })
+                            .then(() => {
+                                console.log("Document successfully updated!");
+                            })
+                            .catch((error) => {
+                                // The document probably doesn't exist.
+                                console.error("Error updating document: ", error);
+                            });
+                    }
+                    else if(doc.data().number != parseInt(student_num)){
+                      num_track = false;  
+                      matchName.textContent = "Number not registered! ";
+                    }
+                    else if(doc.data().searched==true){
+                          matchName.textContent = "Pair already exists! ";
+                          matchYear.textContent = doc.data().matchedToName.toUpperCase() + ' Year: '  + String(doc.data().matchedToYear)
+                    }
+
+                  }
                 })
                 .catch((error) => {
-                    console.log("Error getting documents: ", error);
                 });
 
+
+              
+
                 $('.alert2').hide();
-
-                // db.collection(student_year)
-                // .add({
-                //     name: student_name,
-                //     number: student_num,
-                //     year: student_year,
-                // })
-                // .then((docRef) => {
-                //     console.log("Document written with ID: ", docRef.id);
-                //     // $('.alert2').hide();
-                //     // $('.alert1').show();
-                // })
-                // .catch((error) => {
-                //     console.error("Error adding document: ", error);
-                // });
-
 
             }
             else {
@@ -232,23 +284,6 @@
                 $('.alert2').show();
             }
         }
-        
-
-        // Add a new document in collection "cities"
-        // db.collection(student_year)
-        //   .doc()
-        //   .set({
-        //     name: student_name,
-        //     phone: student_num,
-        //     year: student_year,
-        //   })
-        //   .then(() => {
-        //     console.log("Document successfully written!");
-        //   })
-        //   .catch((error) => {
-        //     console.error("Error writing document: ", error);
-        //   });
-
         
       });
 
