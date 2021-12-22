@@ -27,7 +27,7 @@
             Hola! You have successfully registered, Good luck!
         </div> -->
         <div class="alert alert2 alert-danger">
-            Oops! Something is wrong, check the values again!
+            Check the entered values!
         </div>
         <div class="innerContainer mt-3">
               <input
@@ -128,165 +128,239 @@
       var db = firebase.firestore();
       const matchBtn = document.querySelector("#match_btn");
 
-      matchBtn.addEventListener("click", () => {
-
+      matchBtn.addEventListener('click', () => {
         let student_num = String($("#phone_num").val());
         let student_year = String($("#year").val());
 
-        if (student_num.length != 10 || student_num.includes("-")) {
-            $('.alert1').hide();
-            $('.alert2').show();
-        } else {
-            if ((parseInt(student_year) < 5 && parseInt(student_year) > 0)) {
-              track = false;
-              num_track = true;
+        if(student_num.length!=10 || student_num.includes("-") || parseInt(student_year) <= 0 || parseInt(student_year) > 4 ){
+          $('.alert2').show();
+        }
+        else{
+          if (window.matchMedia('(max-width: 576px)').matches) {
+              $(".mainContainer").css({
+                  'background-image' : 'url(/assets/findmob.jpg)',
+                  'background-repeat': 'no-repeat',
+                  'background-size': 'cover',
+                  'background-position': 'center',
+              });
+              }
+              else {
+              $(".mainContainer").css({
+                  'background-image' : 'url(/assets/findweb.jpg)',
+                  'background-repeat': 'no-repeat',
+                  'background-size': 'cover',
+                  'background-position': 'center',
+              });
+              }
+              $("#phone_num").addClass("hide");
+              $("#year").addClass("nodisplay");
+              $("#match_btn").addClass("nodisplay");
 
-                if (window.matchMedia('(max-width: 576px)').matches) {
-                    $(".mainContainer").css({
-                        'background-image' : 'url(/assets/findmob.jpg)',
-                        'background-repeat': 'no-repeat',
-                        'background-size': 'cover',
-                        'background-position': 'center',
-                    });
-                } else {
-                    $(".mainContainer").css({
-                        'background-image' : 'url(/assets/findweb.jpg)',
-                        'background-repeat': 'no-repeat',
-                        'background-size': 'cover',
-                        'background-position': 'center',
-                });
-                }
-                $("#phone_num").addClass("hide");
-                $("#year").addClass("nodisplay");
-                $("#match_btn").addClass("nodisplay");
+              let matchName = document.createElement("h4");
+              let matchYear = document.createElement("h4");
+              let matchContainer = document.createElement("div");
+              $(matchName).css({
+                  "text-align":"center",
+                  "font-size":"30px",
+                  "font-weight":"bold",
+                  "color" : "#fff"
+              });
+              $(matchYear).css({
+                  "text-align":"center",
+                  "font-size":"25px",
+                  "font-weight":"bold",
+                  "color" : "#fff"
+              });
 
-                let matchName = document.createElement("h4");
-                let matchYear = document.createElement("h4");
-                let matchContainer = document.createElement("div");
-                $(matchName).css({
-                    "text-align":"center",
-                    "font-size":"30px",
-                    "font-weight":"bold",
-                    "color" : "#fff"
-                });
-                $(matchYear).css({
-                    "text-align":"center",
-                    "font-size":"25px",
-                    "font-weight":"bold",
-                    "color" : "#fff"
-                });
+              $(matchContainer).append(matchName,matchYear);
+              $(matchContainer).css({
+                  "background-color": "#f72c2c",
+                  "opacity" : "0.5",
+                  "padding" : "10px 15px 10px 15px"
+              })
+              $(".innerContainer").append(matchContainer);
+           }
 
-                $(matchContainer).append(matchName,matchYear);
-                $(matchContainer).css({
-                    "background-color": "#f72c2c",
-                    "opacity" : "0.5",
-                    "padding" : "10px 15px 10px 15px"
-                })
-                $(".innerContainer").append(matchContainer);
-
-                db.collection(student_year)
-                .get()
-                .then((querySnapshot) => {
-                  for (var i in querySnapshot.docs) {
-                    const doc = querySnapshot.docs[i]
-                    if((doc.data().number == parseInt(student_num)) && (doc.data().searched == false)){
-                      current_doc_id = doc.id
-                      current_doc_year = student_year
-                    num_track = true;
-                    let temp = Math.floor((Math.random() * 4)+1)
-                    db.collection(String(temp))
-                        .get()
-                        .then((querySnapshot) => {
-                            var x = querySnapshot.docs.length;
-                          }).catch((error) => {
-                                console.error("Error removing document: ", error);
-                            });
-
-                    while((temp==parseInt(student_year))&&(x>0)){
-                        temp = Math.floor((Math.random() * 4)+1)
-                        db.collection(String(temp))
-                        .get()
-                        .then((querySnapshot) => {
-                            x = querySnapshot.docs.length;
-                          }).catch((error) => {
-                                console.error("Error removing document: ", error);
-                            });
-                    }
-
-                      db.collection(String(temp))
-                        .get()
-                        .then((querySnapshot) => {
-                            var x = Math.floor(Math.random() * querySnapshot.docs.length);
-                            let doc = querySnapshot.docs[x];
-                            matched_check=doc.data().matched;
-                            while(matched_check==true){
-                            x = Math.floor(Math.random() * querySnapshot.docs.length);
-                            doc = querySnapshot.docs[x];
-                            matched_check=doc.data().matched;
-                            }
-                            matchname =doc.data().name;
-                            matchyear=doc.data().year
-                            matchName.textContent = matchname;
-                            matchYear.textContent = "Year : " + matchyear;
-                            console.log(matchname)
-                            console.log(matchyear)
-
-                            db.collection(current_doc_year).doc(current_doc_id).update({
-                              matchedToName: matchname,
-                              matchedToYear: matchyear,
-                            }).catch((error) => {
-                                console.error("Error assigning match name and match year: ", error);
-                            });
-
-                            db.collection(String(temp)).doc(doc.id).update({
-                              matched:true
-                            })
-
-
-                        })
-                        .catch((error) => {
-                            console.log("Error getting documents: ", error);
-                        });
-
-
-                        db.collection(current_doc_year).doc(current_doc_id).update({
-                                searched: true
-                            })
-                            .then(() => {
-                                console.log("Document successfully updated!");
-                            })
-                            .catch((error) => {
-                                // The document probably doesn't exist.
-                                console.error("Error updating document: ", error);
-                            });
-                    }
-                    else if(doc.data().number != parseInt(student_num)){
-                      num_track = false;  
-                      matchName.textContent = "Number not registered! ";
-                    }
-                    else if(doc.data().searched==true){
-                          matchName.textContent = "Pair already exists! ";
-                          matchYear.textContent = doc.data().matchedToName.toUpperCase() + ' Year: '  + String(doc.data().matchedToYear)
-                    }
-
+          db.collection(student_year).get().then((querySnapshot) => {
+              for(let i in querySnapshot.docs){
+                const doc = querySnapshot.docs[i]
+                if(doc.data().number == student_num){
+                  matchname = doc.data().matchedToName;
+                  matchyear = doc.data().matchedToYear;
+                  if(matchname == 'test'){
+                    matchName.textContent = "Friends Out Of Stock!"
+                    matchYear.textContent = "Better luck next time!"
                   }
-                })
-                .catch((error) => {
-                });
+                  else{
+                    matchName.textContent = matchname;
+                    matchYear.textContent = "Year : " + matchyear;
+                  }
+                }
+              }
+          });
+      })
+
+
+      // matchBtn.addEventListener("click", () => {
+
+      //   let student_num = String($("#phone_num").val());
+      //   let student_year = String($("#year").val());
+
+      //   if (student_num.length != 10 || student_num.includes("-")) {
+      //       $('.alert1').hide();
+      //       $('.alert2').show();
+      //   } else {
+      //       if ((parseInt(student_year) < 5 && parseInt(student_year) > 0)) {
+      //         track = false;
+      //         num_track = true;
+
+      //           if (window.matchMedia('(max-width: 576px)').matches) {
+      //               $(".mainContainer").css({
+      //                   'background-image' : 'url(/assets/findmob.jpg)',
+      //                   'background-repeat': 'no-repeat',
+      //                   'background-size': 'cover',
+      //                   'background-position': 'center',
+      //               });
+      //           } else {
+      //               $(".mainContainer").css({
+      //                   'background-image' : 'url(/assets/findweb.jpg)',
+      //                   'background-repeat': 'no-repeat',
+      //                   'background-size': 'cover',
+      //                   'background-position': 'center',
+      //           });
+      //           }
+      //           $("#phone_num").addClass("hide");
+      //           $("#year").addClass("nodisplay");
+      //           $("#match_btn").addClass("nodisplay");
+
+      //           let matchName = document.createElement("h4");
+      //           let matchYear = document.createElement("h4");
+      //           let matchContainer = document.createElement("div");
+      //           $(matchName).css({
+      //               "text-align":"center",
+      //               "font-size":"30px",
+      //               "font-weight":"bold",
+      //               "color" : "#fff"
+      //           });
+      //           $(matchYear).css({
+      //               "text-align":"center",
+      //               "font-size":"25px",
+      //               "font-weight":"bold",
+      //               "color" : "#fff"
+      //           });
+
+      //           $(matchContainer).append(matchName,matchYear);
+      //           $(matchContainer).css({
+      //               "background-color": "#f72c2c",
+      //               "opacity" : "0.5",
+      //               "padding" : "10px 15px 10px 15px"
+      //           })
+      //           $(".innerContainer").append(matchContainer);
+
+      //           db.collection(student_year)
+      //           .get()
+      //           .then((querySnapshot) => {
+      //             for (var i in querySnapshot.docs) {
+      //               const doc = querySnapshot.docs[i]
+      //               if((doc.data().number == parseInt(student_num)) && (doc.data().searched == false)){
+      //                 current_doc_id = doc.id
+      //                 current_doc_year = student_year
+      //                 num_track = true;
+      //                 let temp = Math.floor((Math.random() * 4)+1)
+      //                 db.collection(String(temp))
+      //                 .get()
+      //                 .then((querySnapshot) => {
+      //                     var x = querySnapshot.docs.length;
+      //                 })
+      //                 .catch((error) => {
+      //                     console.error("Error removing document: ", error);
+      //                 });
+
+      //                 while((temp==parseInt(student_year))&&(x>0)){
+      //                     temp = Math.floor((Math.random() * 4)+1)
+      //                     db.collection(String(temp))
+      //                     .get()
+      //                     .then((querySnapshot) => {
+      //                         x = querySnapshot.docs.length;
+      //                     }).catch((error) => {
+      //                         console.error("Error removing document: ", error);
+      //                     });
+      //                 }
+
+      //                   db.collection(String(temp))
+      //                     .get()
+      //                     .then((querySnapshot) => {
+      //                         var x = Math.floor(Math.random() * querySnapshot.docs.length);
+      //                         let doc = querySnapshot.docs[x];
+      //                         matched_check=doc.data().matched;
+      //                         while(matched_check==true){
+      //                         x = Math.floor(Math.random() * querySnapshot.docs.length);
+      //                         doc = querySnapshot.docs[x];
+      //                         matched_check=doc.data().matched;
+      //                         }
+      //                         matchname =doc.data().name;
+      //                         matchyear=doc.data().year
+      //                         matchName.textContent = matchname;
+      //                         matchYear.textContent = "Year : " + matchyear;
+      //                         console.log(matchname)
+      //                         console.log(matchyear)
+
+      //                         db.collection(current_doc_year).doc(current_doc_id).update({
+      //                           matchedToName: matchname,
+      //                           matchedToYear: matchyear,
+      //                         }).catch((error) => {
+      //                             console.error("Error assigning match name and match year: ", error);
+      //                         });
+
+      //                         db.collection(String(temp)).doc(doc.id).update({
+      //                           matched:true
+      //                         })
+
+
+      //                     })
+      //                     .catch((error) => {
+      //                         console.log("Error getting documents: ", error);
+      //                     });
+
+
+      //                     db.collection(current_doc_year).doc(current_doc_id).update({
+      //                             searched: true
+      //                         })
+      //                         .then(() => {
+      //                             console.log("Document successfully updated!");
+      //                         })
+      //                         .catch((error) => {
+      //                             // The document probably doesn't exist.
+      //                             console.error("Error updating document: ", error);
+      //                         });
+      //               }
+                    // else if(doc.data().number != parseInt(student_num)){
+                    //   num_track = false;  
+                    //   matchName.textContent = "Number not registered! ";
+                    // }
+                    // else if(doc.data().searched==true){
+                    //       matchName.textContent = "Pair already exists! ";
+                    //       matchYear.textContent = doc.data().matchedToName.toUpperCase() + ' Year: '  + String(doc.data().matchedToYear)
+                    // }
+
+      //             }
+      //           })
+      //           .catch((error) => {
+      //           });
 
 
               
 
-                $('.alert2').hide();
+      //           $('.alert2').hide();
 
-            }
-            else {
-                $('.alert1').hide();
-                $('.alert2').show();
-            }
-        }
+      //       }
+      //       else {
+      //           $('.alert1').hide();
+      //           $('.alert2').show();
+      //       }
+      //   }
         
-      });
+      // });
 
        
     </script>
